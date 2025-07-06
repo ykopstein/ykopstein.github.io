@@ -78,18 +78,33 @@ export interface SwColorInfo {
     isInterior: boolean;
 }
 
-const hslToHsv = (h: number, s: number, l: number): { h: number; s: number; v: number } => {
-    s = Math.max(0, Math.min(1, s));
-    l = Math.max(0, Math.min(1, l));
-    let v = l + s * Math.min(l, 1 - l);
-    let newS = v === 0 ? 0 : 2 * (1 - l / v);
+const rgbToHsv = (r: number, g: number, b: number): { h: number; s: number; v: number } => {
+    const rPrime = r / 255;
+    const gPrime = g / 255;
+    const bPrime = b / 255;
+
+    const cMax = Math.max(rPrime, gPrime, bPrime);
+    const cMin = Math.min(rPrime, gPrime, bPrime);
+    const delta = cMax - cMin;
+
+    const h = +
+        delta === 0 ? 0 : 
+        cMax === rPrime ? ((gPrime - bPrime) / delta % 6) :
+        cMax === gPrime ? ((bPrime - rPrime) / delta + 2) :
+        ((rPrime - gPrime) / delta + 4);
+
+    const s =
+        cMax === 0 ? 0 :
+        delta / cMax;
+    
+    const v = cMax;
 
     return {
         h: h,
-        s: (newS * 100),
-        v: (v * 100)
+        s: s,
+        v: v
     };
-};
+}
 
 function SwColorInfo() {
     const [colorCodeText, setColorCodeText] = useState<string>('');
@@ -112,7 +127,11 @@ function SwColorInfo() {
         const pcntHue = parseFloat(colorInfo.hue);
         const hue = pcntHue * 360;
 
-        const hsv = hslToHsv(pcntHue, parseFloat(colorInfo.saturation) / 100, parseFloat(colorInfo.lightness) / 100);
+        const r = parseInt(colorInfo.red, 10);
+        const g = parseInt(colorInfo.green, 10);
+        const b = parseInt(colorInfo.blue, 10);
+
+        const hsv = rgbToHsv(r, g, b);
         setCalculatedColorInfo({
             hue: hue,
             lightness: parseFloat(colorInfo.lightness),
