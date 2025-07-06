@@ -94,7 +94,7 @@ const hslToHsv = (h: number, s: number, l: number): { h: number; s: number; v: n
 function SwColorInfo() {
     const [colorCodeText, setColorCodeText] = useState<string>('');
     const [colorInfo, setColorInfo] = useState<SwColorInfo | null>(null);
-    const [hsv, setHsv] = useState<{ h: number; s: number; v: number } | null>(null);
+    const [calculatedColorInfo, setCalculatedColorInfo] = useState<{ hue: number; lightness: number; saturationForHsv: number; value: number, saturationForHsl: number, lrv: number } | null>(null);
 
     const dlColorInfoFromSw = async (colorCode: string): Promise<SwColorInfo> => {
         const response = await fetch(`https://api.sherwin-williams.com/shared-color-service/color/byColorNumber/${colorCode}`);
@@ -109,8 +109,18 @@ function SwColorInfo() {
         const colorInfo = await dlColorInfoFromSw(code);
         setColorInfo(colorInfo);
 
-        const hsv = hslToHsv(parseFloat(colorInfo.hue), parseFloat(colorInfo.saturation) / 100, parseFloat(colorInfo.lightness) / 100);
-        setHsv(hsv);
+        const pcntHue = parseFloat(colorInfo.hue);
+        const hue = pcntHue * 360;
+
+        const hsv = hslToHsv(pcntHue, parseFloat(colorInfo.saturation) / 100, parseFloat(colorInfo.lightness) / 100);
+        setCalculatedColorInfo({
+            hue: hue,
+            lightness: parseFloat(colorInfo.lightness),
+            saturationForHsv: hsv.s,
+            value: hsv.v,
+            saturationForHsl: parseFloat(colorInfo.saturation),
+            lrv: parseFloat(colorInfo.lrv)
+        });
     };
 
     return (
@@ -118,7 +128,7 @@ function SwColorInfo() {
             <h2>Sherwin Williams Color Info</h2>
             <input type="text" placeholder="Enter color code eg SW7602" value={colorCodeText} onChange={e => setColorCodeText(e.target.value)} />
             <button onClick={() => setColorCode(colorCodeText)}>Update</button>
-            {colorInfo === null || hsv === null ?
+            {colorInfo === null || calculatedColorInfo === null ?
                 (<p>Enter a color</p>) :
                 (<>
                     <h3 style={{ textAlign: "left" }}>{colorInfo.name}</h3>
@@ -131,8 +141,9 @@ function SwColorInfo() {
                         }}></div>
                         <ul style={{ textAlign: "left" }}>
                             <li>RGB ({colorInfo.red}, {colorInfo.green}, {colorInfo.blue})</li>
-                            <li>HSL ({colorInfo.hue}, {colorInfo.saturation}, {colorInfo.lightness})</li>
-                            <li>HSV ({colorInfo.hue}, {hsv.s}, {hsv.v})</li>
+                            <li>HSL ({calculatedColorInfo.hue.toFixed(1)}, {(calculatedColorInfo.saturationForHsl * 100).toFixed(1)}, {(calculatedColorInfo.lightness * 100).toFixed(1)})</li>
+                            <li>HSV ({calculatedColorInfo.hue.toFixed(1)}, {(calculatedColorInfo.saturationForHsv * 100).toFixed(1)}, {(calculatedColorInfo.value * 100).toFixed(1)})</li>
+                            <li>LRV {(calculatedColorInfo.lrv).toFixed(1)}</li>
                         </ul>
 
                         <ColorLinkList
