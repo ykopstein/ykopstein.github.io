@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 
 interface CoordinatingColor {
     number: string;
@@ -92,7 +92,7 @@ function SwColorInfo() {
         <div className="sw-color-info">
             <h2>Sherwin Williams Color Info</h2>
             <input type="text" placeholder="Enter color code eg SW7602" value={colorCode} onChange={e => setColorCode(e.target.value)} />
-            <button onClick={e => updateColorFromInput()}>Update</button>
+            <button onClick={() => updateColorFromInput()}>Update</button>
             {colorInfo === null ?
                 (<>Enter a color</>) :
                 (<ul>
