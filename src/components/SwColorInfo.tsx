@@ -1,6 +1,12 @@
 import { useState } from "react";
 
-interface CoordinatingColor {
+interface IColorLinkInfo {
+    number: string;
+    name: string;
+    hex: string;
+}
+
+interface CoordinatingColor extends IColorLinkInfo {
     number: string;
     isDark: string; // "True" or "False"
     name: string;
@@ -8,7 +14,7 @@ interface CoordinatingColor {
     hex: string;
 }
 
-interface ColorStripColor {
+interface ColorStripColor extends IColorLinkInfo {
     number: string;
     isDark: string;
     stripNumber: string;
@@ -18,7 +24,7 @@ interface ColorStripColor {
     stripPostion: string;
 }
 
-interface SimilarColor {
+interface SimilarColor extends IColorLinkInfo {
     number: string;
     isDark: string;
     name: string;
@@ -72,41 +78,128 @@ export interface SwColorInfo {
     isInterior: boolean;
 }
 
-function SwColorInfo() {
-    const [colorCode, setColorCode] = useState<string>('');
-    const [colorInfo, setColorInfo] = useState<SwColorInfo | null>(null);
+const hslToHsv = (h: number, s: number, l: number): { h: number; s: number; v: number } => {
+    s = Math.max(0, Math.min(1, s));
+    l = Math.max(0, Math.min(1, l));
+    let v = l + s * Math.min(l, 1 - l);
+    let newS = v === 0 ? 0 : 2 * (1 - l / v);
 
-    const getColorInfo = async (colorCode: string): Promise<SwColorInfo> => {
+    return {
+        h: h,
+        s: (newS * 100),
+        v: (v * 100)
+    };
+};
+
+function SwColorInfo() {
+    const [colorCodeText, setColorCodeText] = useState<string>('');
+    const [colorInfo, setColorInfo] = useState<SwColorInfo | null>(null);
+    const [hsv, setHsv] = useState<{ h: number; s: number; v: number } | null>(null);
+
+    const dlColorInfoFromSw = async (colorCode: string): Promise<SwColorInfo> => {
         const response = await fetch(`https://api.sherwin-williams.com/shared-color-service/color/byColorNumber/${colorCode}`);
         const json = await response.json();
 
         return json as SwColorInfo;
     };
 
-    const updateColorFromInput = async () => {
-        const colorInfo = await getColorInfo(colorCode);
+    const setColorCode = async (code: string) => {
+        setColorCodeText(code);
+
+        const colorInfo = await dlColorInfoFromSw(code);
         setColorInfo(colorInfo);
+
+        const hsv = hslToHsv(parseFloat(colorInfo.hue), parseFloat(colorInfo.saturation) / 100, parseFloat(colorInfo.lightness) / 100);
+        setHsv(hsv);
     };
 
     return (
         <div className="sw-color-info">
             <h2>Sherwin Williams Color Info</h2>
-            <input type="text" placeholder="Enter color code eg SW7602" value={colorCode} onChange={e => setColorCode(e.target.value)} />
-            <button onClick={() => updateColorFromInput()}>Update</button>
-            {colorInfo === null ?
-                (<>Enter a color</>) :
-                (<ul>
-                    <li>{colorInfo.name}</li>
-                    <li>R {colorInfo.red}</li>
-                    <li>G {colorInfo.green}</li>
-                    <li>B {colorInfo.blue}</li>
-                    <li>H {colorInfo.hue}</li>
-                    <li>S {colorInfo.saturation}</li>
-                    <li>L {colorInfo.lightness}</li>
-                </ul>)
+            <input type="text" placeholder="Enter color code eg SW7602" value={colorCodeText} onChange={e => setColorCodeText(e.target.value)} />
+            <button onClick={() => setColorCode(colorCodeText)}>Update</button>
+            {colorInfo === null || hsv === null ?
+                (<p>Enter a color</p>) :
+                (<>
+                    <h3 style={{ textAlign: "left" }}>{colorInfo.name}</h3>
+                    <div style={{ display: "flex", alignItems: "flex-start" }}>
+                        <div style={{
+                            backgroundColor: `#${colorInfo.hex}`,
+                            width: '100px',
+                            height: '100px',
+                            borderRadius: '50%'
+                        }}></div>
+                        <ul style={{ textAlign: "left" }}>
+                            <li>RGB ({colorInfo.red}, {colorInfo.green}, {colorInfo.blue})</li>
+                            <li>HSL ({colorInfo.hue}, {colorInfo.saturation}, {colorInfo.lightness})</li>
+                            <li>HSV ({colorInfo.hue}, {hsv.s}, {hsv.v})</li>
+                        </ul>
+
+                        <ColorLinkList
+                            title="Coordinating Colors"
+                            colors={colorInfo.coordinatingColors}
+                            onClick={code => setColorCode(code)}
+                        ></ColorLinkList>
+
+                        <ColorLinkList
+                            title="Color Strip Colors"
+                            colors={colorInfo.colorStripColors}
+                            onClick={code => setColorCode(code)}
+                        ></ColorLinkList>
+
+                        <ColorLinkList
+                            title="Similar Colors"
+                            colors={colorInfo.similarColors}
+                            onClick={code => setColorCode(code)}
+                        ></ColorLinkList>
+                    </div>
+                </>)
             }
         </div >
     );
+}
+
+interface ColorLinkListProps {
+    title: string;
+    colors: IColorLinkInfo[];
+    onClick: (code: string) => void;
+}
+
+function ColorLinkList({ title, colors, onClick }: ColorLinkListProps) {
+    return (
+        <ul style={{ textAlign: "left", listStyleType: 'none' }}>
+            <li>
+                <h4>{title}</h4>
+                <ul style={{ listStyleType: 'none', paddingLeft: 0 }}>
+                    {colors.map(color =>
+                    (<li key={color.number}>
+                        <ColorLink color={color} onClick={onClick}></ColorLink>
+                    </li>)
+                    )}
+                </ul>
+            </li>
+        </ul>
+    );
+}
+
+interface ColorLinkProps {
+    color: IColorLinkInfo;
+    onClick: (code: string) => void;
+}
+
+function ColorLink({ color, onClick }: ColorLinkProps) {
+    return (<>
+        <div onClick={() => onClick(color.number)} style={{ cursor: 'pointer', display: 'flex', alignItems: 'center' }}>
+            <div style={{
+                backgroundColor: `#${color.hex}`,
+                width: '10px',
+                height: '10px',
+                borderRadius: '50%',
+                marginRight: '10px'
+            }}></div>
+            <div>{color.number} - {color.name}</div>
+        </div>
+    </>)
 }
 
 export default SwColorInfo;
