@@ -115,8 +115,13 @@ function SwColorInfo({ colorCode, onColorLink }: SwColorInfoProps) {
     const [colorInfo, setColorInfo] = useState<SwColorInfo | null>(null);
     const [calculatedColorInfo, setCalculatedColorInfo] = useState<{ hue: number; lightness: number; saturationForHsv: number; value: number, saturationForHsl: number, lrv: number } | null>(null);
 
-    const dlColorInfoFromSw = async (colorCode: string): Promise<SwColorInfo> => {
+    const dlColorInfoFromSw = async (colorCode: string): Promise<SwColorInfo | null> => {
         const response = await fetch(`https://api.sherwin-williams.com/shared-color-service/color/byColorNumber/${colorCode}`);
+        if (!response.ok) {
+            console.error(`Failed to fetch color info for ${colorCode}: ${response.statusText}`);
+            return null;
+        }
+
         const json = await response.json();
 
         return json as SwColorInfo;
@@ -127,6 +132,8 @@ function SwColorInfo({ colorCode, onColorLink }: SwColorInfoProps) {
 
         (async () => {
             const colorInfo = await dlColorInfoFromSw(colorCode);
+            if(colorInfo === null) return;
+            
             setColorInfo(colorInfo);
         
             const pcntHue = parseFloat(colorInfo.hue);
