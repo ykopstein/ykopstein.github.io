@@ -1,7 +1,7 @@
 import { BrowserRouter, Routes, Route, useNavigate, useParams } from 'react-router-dom';
 import './App.css'
-import SwColorInfo from './components/SwColorInfo'
-import SwColorSelector from './components/SwColorSelector'
+import ScsColorDetails from './sherwinWilliams/components/ScsColorDetails'
+import ScsColorSelector from './sherwinWilliams/components/ScsColorSelector'
 
 function SwColorInfoRoute() {
     const { colorCode } = useParams<{ colorCode: string }>();
@@ -10,11 +10,11 @@ function SwColorInfoRoute() {
     return (
         <>
             <h2>Sherwin Williams Color Info</h2>
-            <SwColorSelector
+            <ScsColorSelector
                 colorCode={colorCode || ''}
                 onSelect={code => navigate(`/color/${code}`)}
             />
-            <SwColorInfo
+            <ScsColorDetails
                 colorCode={colorCode || ''}
                 onColorLink={code => navigate(`/color/${code}`)}
             />

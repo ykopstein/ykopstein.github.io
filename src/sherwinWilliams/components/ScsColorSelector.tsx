@@ -1,11 +1,11 @@
 import { useEffect, useState } from "react";
 
-export interface SwColorSelectorProps {
+export interface ScsColorSelectorProps {
     colorCode?: string;
     onSelect: (colorCode: string) => void;
 }
 
-function SwColorSelector({ onSelect, colorCode }: SwColorSelectorProps) {
+function ScsColorSelector({ onSelect, colorCode }: ScsColorSelectorProps) {
     const [colorCodeText, setColorCodeText] = useState<string>('');
 
     useEffect(() => {
@@ -26,4 +26,4 @@ function SwColorSelector({ onSelect, colorCode }: SwColorSelectorProps) {
     );
 }
 
-export default SwColorSelector;
+export default ScsColorSelector;

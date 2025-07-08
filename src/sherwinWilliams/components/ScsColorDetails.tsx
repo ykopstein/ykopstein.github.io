@@ -1,82 +1,6 @@
+import { type SharedColorServiceColor, type IColorLinkInfo } from '../api/types';
+import { getColorInfo } from '../api/sharedColorService';
 import { useEffect, useState } from "react";
-
-interface IColorLinkInfo {
-    number: string;
-    name: string;
-    hex: string;
-}
-
-interface CoordinatingColor extends IColorLinkInfo {
-    number: string;
-    isDark: string; // "True" or "False"
-    name: string;
-    colorUrl: string;
-    hex: string;
-}
-
-interface ColorStripColor extends IColorLinkInfo {
-    number: string;
-    isDark: string;
-    stripNumber: string;
-    name: string;
-    colorUrl: string;
-    hex: string;
-    stripPostion: string;
-}
-
-interface SimilarColor extends IColorLinkInfo {
-    number: string;
-    isDark: string;
-    name: string;
-    colorUrl: string;
-    hex: string;
-}
-
-interface AttributeValue {
-    value: string;
-}
-
-interface Attribute {
-    identifier: string;
-    attributeValues: AttributeValue[];
-}
-
-interface Lab {
-    A: string;
-    B: string;
-    L: string;
-}
-
-export interface SwColorInfo {
-    colorNumber: string;
-    colorNumberDisplay: string;
-    coordinatingColors: CoordinatingColor[];
-    description: string[];
-    id: number;
-    displayOrder: number | null;
-    name: string;
-    lrv: string;
-    brandedCollectionNames: string[];
-    colorFamilyNames: string[];
-    brandKey: string;
-    red: string;
-    green: string;
-    blue: string;
-    hue: string;
-    saturation: string;
-    lightness: string;
-    hex: string;
-    isDark: string;
-    storeStripLocator: string | null;
-    colorStripColors: ColorStripColor[];
-    similarColors: SimilarColor[];
-    ignore: string;
-    status: string;
-    lab: Lab;
-    attributes: Attribute[];
-    isExterior: boolean;
-    isInterior: boolean;
-}
 
 const rgbToHsv = (r: number, g: number, b: number): { h: number; s: number; v: number } => {
     const rPrime = r / 255;
@@ -106,32 +30,20 @@ const rgbToHsv = (r: number, g: number, b: number): { h: number; s: number; v: n
     };
 }
 
-export interface SwColorInfoProps {
+export interface ScsColorDetailsProps {
     colorCode: string;
     onColorLink: (colorCode: string) => void;
 }
 
-function SwColorInfo({ colorCode, onColorLink }: SwColorInfoProps) {
-    const [colorInfo, setColorInfo] = useState<SwColorInfo | null>(null);
+function ScsColorDetails({ colorCode, onColorLink }: ScsColorDetailsProps) {
+    const [colorInfo, setColorInfo] = useState<SharedColorServiceColor | null>(null);
     const [calculatedColorInfo, setCalculatedColorInfo] = useState<{ hue: number; lightness: number; saturationForHsv: number; value: number, saturationForHsl: number, lrv: number } | null>(null);
-
-    const dlColorInfoFromSw = async (colorCode: string): Promise<SwColorInfo | null> => {
-        const response = await fetch(`https://api.sherwin-williams.com/shared-color-service/color/byColorNumber/${colorCode}`);
-        if (!response.ok) {
-            console.error(`Failed to fetch color info for ${colorCode}: ${response.statusText}`);
-            return null;
-        }
-
-        const json = await response.json();
-
-        return json as SwColorInfo;
-    };
 
     useEffect(() => {
         if(!colorCode) return;
 
         (async () => {
-            const colorInfo = await dlColorInfoFromSw(colorCode);
+            const colorInfo = await getColorInfo(colorCode);
             if(colorInfo === null) return;
             
             setColorInfo(colorInfo);
@@ -243,4 +155,4 @@ function ColorLink({ color, onClick }: ColorLinkProps) {
     </>)
 }
 
-export default SwColorInfo;
+export default ScsColorDetails;
