@@ -2,6 +2,7 @@ import { BrowserRouter, Routes, Route, useNavigate, useParams } from 'react-rout
 import './App.css'
 import ScsColorDetails from './sherwinWilliams/components/ScsColorDetails'
 import ScsColorSelector from './sherwinWilliams/components/ScsColorSelector'
+import ScsColorDownloader from './sherwinWilliams/components/ScsColorDownloader';
 
 function SwColorInfoRoute() {
     const { colorCode } = useParams<{ colorCode: string }>();
@@ -24,12 +25,15 @@ function SwColorInfoRoute() {
 
 function App() {
     return (
-        <BrowserRouter>
-            <Routes>
-                <Route path="/color/:colorCode" element={<SwColorInfoRoute />} />
-                <Route path="*" element={<SwColorInfoRoute />} />
-            </Routes>
-        </BrowserRouter>
+        <>
+            <ScsColorDownloader></ScsColorDownloader>
+            <BrowserRouter>
+                <Routes>
+                    <Route path="/color/:colorCode" element={<SwColorInfoRoute />} />
+                    <Route path="*" element={<SwColorInfoRoute />} />
+                </Routes>
+            </BrowserRouter>
+        </>
     );
 }
 
