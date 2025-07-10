@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { getColorInfo, toSwCodeString } from '../api/sharedColorService';
+import { getColor, toSwCodeString } from '../api/sharedColorService';
 
 const getCacheKeys = (): string[] => [...Array(localStorage.length).keys()]
     .map(ix => localStorage.key(ix)!)
@@ -36,7 +36,7 @@ function ScsColorDownloader() {
 
         setIsLoading(true);
         for (let code = parseInt(minCode); code <= parseInt(maxCode); code++) {
-            await getColorInfo(toSwCodeString(code));
+            await getColor(toSwCodeString(code));
         }
         setIsLoading(false);
     };

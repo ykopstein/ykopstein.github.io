@@ -9,7 +9,8 @@
     "tsc": "tsc -b",
     "lint": "eslint .",
     "preview": "vite preview",
-    "updateCache": "tsc -b && node --import=tsx scripts/updateCache.ts"
+    "updateCache": "tsc -b && node --import=tsx scripts/updateCache.ts",
+    "generateColorLookup": "tsc -b && node --import=tsx scripts/generateColorLookup.ts"
   },
   "dependencies": {
     "axios": "^1.10.0",

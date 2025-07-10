@@ -4,6 +4,16 @@ export interface IColorLinkInfo {
     hex: string;
 }
 
+export interface IColorMetadata {
+    number: string;
+    name: string;
+    hex: string;
+    rgb: { r: number, g: number, b: number };
+    hsl: { h: number, s: number, l: number };
+    hsv: { h: number, s: number, v: number };
+    lrv: number;
+}
+
 export interface CoordinatingColor extends IColorLinkInfo {
     number: string;
     isDark: string; // "True" or "False"
