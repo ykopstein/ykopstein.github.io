@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { getColorInfo } from '../api/sharedColorService';
+import { getColorInfo, toSwCodeString } from '../api/sharedColorService';
 
 const getCacheKeys = (): string[] => [...Array(localStorage.length).keys()]
     .map(ix => localStorage.key(ix)!)
@@ -19,13 +19,11 @@ const findKeyGaps = (keys: string[]): { start: number, end: number }[] => {
     return gaps;
 }
 
-const toSwCodeString = (code: number): string => `SW${code.toString().padStart(4, '0')}`;
-
 function ScsColorDownloader() {
     const [isPanelOpen, setIsPanelOpen] = useState(false);
     const [isLoading, setIsLoading] = useState(false);
-    const [minCode, setMinCode] = useState<string | undefined>();
-    const [maxCode, setMaxCode] = useState<string | undefined>();
+    const [minCode, setMinCode] = useState<string>('');
+    const [maxCode, setMaxCode] = useState<string>('');
     const [cacheKeys, setCacheKeys] = useState<string[]>(getCacheKeys());         
 
     const keyGaps = findKeyGaps(cacheKeys);
@@ -38,7 +36,6 @@ function ScsColorDownloader() {
 
         setIsLoading(true);
         for (let code = parseInt(minCode); code <= parseInt(maxCode); code++) {
-
             await getColorInfo(toSwCodeString(code));
         }
         setIsLoading(false);

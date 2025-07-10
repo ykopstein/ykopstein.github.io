@@ -1,4 +1,7 @@
 import { type SharedColorServiceColor } from "./types";
+import axios from 'axios';
+
+const API_BASE_URL = 'https://api.sherwin-williams.com/shared-color-service';
 
 export const getColorInfo = async (colorCode: string): Promise<SharedColorServiceColor | null> => {
     const cached = tryGetColorInfoFromCache(colorCode);
@@ -15,17 +18,18 @@ export const getColorInfo = async (colorCode: string): Promise<SharedColorServic
     }
 };
 
-const downloadColorInfo = async (colorCode: string): Promise<SharedColorServiceColor | null> => {
-    const response = await fetch(`https://api.sherwin-williams.com/shared-color-service/color/byColorNumber/${colorCode}`);
-    if (!response.ok) {
-        console.error(`Failed to fetch color info for ${colorCode}: ${response.statusText}`);
+export const downloadColorInfo = async (colorCode: string): Promise<SharedColorServiceColor | null> => {
+    const response = await axios.get(`${API_BASE_URL}/color/byColorNumber/${colorCode}`, { validateStatus: () => true});
+    if (response.status !== 200) {
         return null;
+        
+    } else {
+        return response.data as SharedColorServiceColor;
     }
 
-    const json = await response.json();
-
-    return json as SharedColorServiceColor;
 };
+
+export const toSwCodeString = (code: number): string => `SW${code.toString().padStart(4, '0')}`;
 
 const tryGetColorInfoFromCache = (colorCode: string): SharedColorServiceColor | 'invalid-code' | 'cache-miss' => {
     const key = getCacheKey(colorCode);
