@@ -22,12 +22,12 @@ const create3ValOperator = <T extends GridValidRowModel>(props: Pick<_3ValFilter
                     return false;
                 }
 
-                if(filter.a.max && value[props.aPropName] > filter.a.max) return false;
-                if(filter.a.min && value[props.aPropName] <= filter.a.min) return false;
-                if(filter.b.max && value[props.bPropName] > filter.b.max) return false;
-                if(filter.b.min && value[props.bPropName] <= filter.b.min) return false;
-                if(filter.c.max && value[props.cPropName] > filter.c.max) return false;
-                if(filter.c.min && value[props.cPropName] <= filter.c.min) return false;
+                if (filter.a.max && value[props.aPropName] > filter.a.max) return false;
+                if (filter.a.min && value[props.aPropName] < filter.a.min) return false;
+                if (filter.b.max && value[props.bPropName] > filter.b.max) return false;
+                if (filter.b.min && value[props.bPropName] < filter.b.min) return false;
+                if (filter.c.max && value[props.cPropName] > filter.c.max) return false;
+                if (filter.c.min && value[props.cPropName] < filter.c.min) return false;
 
                 return true;
             };
@@ -49,7 +49,7 @@ interface _3ValFilterInputProps extends GridFilterInputValueProps {
     cPropName: string;
 }
 
-function _3ValFilterInput({ aPropName, bPropName, cPropName, applyValue, item}: _3ValFilterInputProps) {
+function _3ValFilterInput({ aPropName, bPropName, cPropName, applyValue, item }: _3ValFilterInputProps) {
     const [aMinVal, setAMinVal] = useState<string>('');
     const [aMaxVal, setAMaxVal] = useState<string>('');
     const [bMinVal, setBMinVal] = useState<string>('');
@@ -60,8 +60,8 @@ function _3ValFilterInput({ aPropName, bPropName, cPropName, applyValue, item}: 
     return (
         <ul style={{ listStyleType: 'none', padding: 0 }}>
             <li><TextField label={`${aPropName} min`} value={aMinVal} onChange={e => setAMinVal(e.target.value)} /> <TextField label={`${aPropName} max`} value={aMaxVal} onChange={e => setAMaxVal(e.target.value)} /></li>
-            <li><TextField label={`${bPropName} min`}  value={bMinVal} onChange={e => setBMinVal(e.target.value)} /> <TextField label={`${bPropName} max`}  value={bMaxVal} onChange={e => setBMaxVal(e.target.value)} /></li>
-            <li><TextField label={`${cPropName} min`}  value={cMinVal} onChange={e => setCMinVal(e.target.value)} /> <TextField label={`${cPropName} max`}  value={cMaxVal} onChange={e => setCMaxVal(e.target.value)} /></li>
+            <li><TextField label={`${bPropName} min`} value={bMinVal} onChange={e => setBMinVal(e.target.value)} /> <TextField label={`${bPropName} max`} value={bMaxVal} onChange={e => setBMaxVal(e.target.value)} /></li>
+            <li><TextField label={`${cPropName} min`} value={cMinVal} onChange={e => setCMinVal(e.target.value)} /> <TextField label={`${cPropName} max`} value={cMaxVal} onChange={e => setCMaxVal(e.target.value)} /></li>
             <li>
                 <button onClick={() => {
                     const filter: _3ValFilter = {
@@ -75,6 +75,64 @@ function _3ValFilterInput({ aPropName, bPropName, cPropName, applyValue, item}: 
             </li>
         </ul>
     );
+}
+
+const createRangeOperator = <T extends GridValidRowModel>(): GridFilterOperator<T, any, any, RangeFilterInputProps> => {
+    return {
+        label: 'Range',
+        value: '3Val',
+        getApplyFilterFn: (filterItem) => {
+            if (!filterItem.value) {
+                return null;
+            }
+
+            const filter = filterItem.value as RangeFilter;
+            return (value): boolean => {
+                if (!value) {
+                    return false;
+                }
+
+                if (filter.max && value > filter.max) return false;
+                if (filter.min && value < filter.min) return false;
+
+                return true;
+            };
+        },
+        InputComponent: RangeFilterInput
+    };
+};
+
+interface RangeFilter {
+    min: number | undefined;
+    max: number | undefined;
+}
+
+interface RangeFilterInputProps extends GridFilterInputValueProps {
+}
+
+function RangeFilterInput({ applyValue, item }: RangeFilterInputProps) {
+    const [minVal, setMinVal] = useState<string>('');
+    const [maxVal, setMaxVal] = useState<string>('');
+
+    return (<>
+        <TextField
+            label='min'
+            value={minVal}
+            onChange={e => setMinVal(e.target.value)} />
+        <TextField
+            label='max'
+            value={maxVal}
+            onChange={e => setMaxVal(e.target.value)} />
+        
+        <button onClick={() => {
+            const filter: RangeFilter = {
+                min: parseNumOrUndefined(minVal),
+                max: parseNumOrUndefined(maxVal)
+            };
+
+            applyValue({ ...item, value: filter });
+        }}>Apply</button>
+    </>);
 }
 
 const parseNumOrUndefined = (val: string): number | undefined => {
@@ -114,7 +172,7 @@ function ScsColorSelector({ onSelect }: ScsColorSelectorProps) {
         { field: 'rgb', headerName: 'RGB', valueFormatter: (x: IRgb) => `(${x.r}, ${x.g}, ${x.b})`, width: 150, filterable: true, filterOperators: [create3ValOperator<IRgb>({ aPropName: 'r', bPropName: 'g', cPropName: 'b' })] },
         { field: 'hsl', headerName: 'HSL', valueFormatter: (x: IHsl) => `(${x.h.toFixed(1)}, ${x.s.toFixed(1)}, ${x.l.toFixed(1)})`, width: 150, filterable: true, filterOperators: [create3ValOperator<IHsl>({ aPropName: 'h', bPropName: 's', cPropName: 'l' })] },
         { field: 'hsv', headerName: 'HSV', valueFormatter: (x: IHsv) => `(${x.h.toFixed(1)}, ${x.s.toFixed(1)}, ${x.v.toFixed(1)})`, width: 150, filterable: true, filterOperators: [create3ValOperator<IHsv>({ aPropName: 'h', bPropName: 's', cPropName: 'v' })] },
-        { field: 'lrv', headerName: 'LRV', width: 100, filterable: true },
+        { field: 'lrv', headerName: 'LRV', width: 100, filterable: true, filterOperators: [createRangeOperator()] },
     ];
 
     return (
