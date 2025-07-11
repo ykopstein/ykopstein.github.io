@@ -1,4 +1,5 @@
 import { type IColorMetadata, type SharedColorServiceColor } from "./types";
+import { rgbToXyz, xyzToLab, labToLch, rgbToHsv } from "./colorConversion";
 import axios from 'axios';
 
 const API_BASE_URL = 'https://api.sherwin-williams.com/shared-color-service';
@@ -38,8 +39,11 @@ export const calculateMetadata = (scsColor: SharedColorServiceColor): IColorMeta
     const r = parseInt(scsColor.red, 10);
     const g = parseInt(scsColor.green, 10);
     const b = parseInt(scsColor.blue, 10);
-
     const hsv = rgbToHsv(r, g, b);
+
+    const xyz = rgbToXyz({ r: r, g: g, b: b });
+    const lab = xyzToLab(xyz);
+    const lch = labToLch(lab);
     
     return {
         number: scsColor.colorNumber,
@@ -48,37 +52,11 @@ export const calculateMetadata = (scsColor: SharedColorServiceColor): IColorMeta
         rgb: { r: r, g: g, b: b },
         hsl: { h: hue, s: parseFloat(scsColor.saturation) * 100, l: parseFloat(scsColor.lightness) * 100 },
         hsv: { h: hue, s: hsv.s * 100, v: hsv.v * 100 },
+        lab: lab,
+        lch: lch,
         lrv: parseFloat(scsColor.lrv)
     };
 };
-
-export const rgbToHsv = (r: number, g: number, b: number): { h: number; s: number; v: number } => {
-    const rPrime = r / 255;
-    const gPrime = g / 255;
-    const bPrime = b / 255;
-
-    const cMax = Math.max(rPrime, gPrime, bPrime);
-    const cMin = Math.min(rPrime, gPrime, bPrime);
-    const delta = cMax - cMin;
-
-    const h = +
-        delta === 0 ? 0 :
-        cMax === rPrime ? ((gPrime - bPrime) / delta % 6) :
-            cMax === gPrime ? ((bPrime - rPrime) / delta + 2) :
-                ((rPrime - gPrime) / delta + 4);
-
-    const s =
-        cMax === 0 ? 0 :
-            delta / cMax;
-
-    const v = cMax;
-
-    return {
-        h: h,
-        s: s,
-        v: v
-    };
-}
 
 const tryGetColorInfoFromCache = (colorCode: string): SharedColorServiceColor | 'invalid-code' | 'cache-miss' => {
     const key = getCacheKey(colorCode);

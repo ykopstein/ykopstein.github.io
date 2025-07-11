@@ -43,6 +43,8 @@ function ScsColorDetails({ colorCode, onColorLink }: ScsColorDetailsProps) {
                             <li>RGB ({colorMetadata.rgb.r}, {colorMetadata.rgb.g}, {colorMetadata.rgb.b})</li>
                             <li>HSL ({colorMetadata.hsl.h.toFixed(1)}, {(colorMetadata.hsl.s).toFixed(1)}, {(colorMetadata.hsl.l).toFixed(1)})</li>
                             <li>HSV ({colorMetadata.hsv.h.toFixed(1)}, {(colorMetadata.hsv.s).toFixed(1)}, {(colorMetadata.hsv.v).toFixed(1)})</li>
+                            <li>LAB ({colorMetadata.lab.l.toFixed(1)}, {colorMetadata.lab.a.toFixed(1)}, {colorMetadata.lab.b.toFixed(1)})</li>
+                            <li>LCH ({colorMetadata.lch.l.toFixed(1)}, {colorMetadata.lch.c.toFixed(1)}, {colorMetadata.lch.h.toFixed(1)})</li>
                             <li>LRV {(colorMetadata.lrv).toFixed(1)}</li>
                         </ul>
 

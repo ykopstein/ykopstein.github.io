@@ -22,6 +22,18 @@ export interface IHsv {
     v: number; 
 }
 
+export interface ILab {
+    l: number;
+    a: number;
+    b: number;
+}
+
+export interface ILch {
+    l: number;
+    c: number;
+    h: number;
+}
+
 export interface IColorMetadata {
     number: string;
     name: string;
@@ -29,6 +41,8 @@ export interface IColorMetadata {
     rgb: IRgb;
     hsl: IHsl;
     hsv: IHsv;
+    lab: ILab;
+    lch: ILch;
     lrv: number;
 }
 

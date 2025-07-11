@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { DataGrid, type GridColDef, type GridFilterInputValueProps, type GridFilterOperator, type GridValidRowModel } from "@mui/x-data-grid";
 import TextField from '@mui/material/TextField';
-import { type IColorMetadata, type IHsl, type IRgb, type IHsv } from "../api/types";
+import { type IColorMetadata, type IHsl, type IRgb, type IHsv, type ILch, type ILab } from "../api/types";
 
 export interface ScsColorSelectorProps {
     onSelect: (colorCode: string) => void;
@@ -172,6 +172,8 @@ function ScsColorSelector({ onSelect }: ScsColorSelectorProps) {
         { field: 'rgb', headerName: 'RGB', valueFormatter: (x: IRgb) => `(${x.r}, ${x.g}, ${x.b})`, width: 150, filterable: true, filterOperators: [create3ValOperator<IRgb>({ aPropName: 'r', bPropName: 'g', cPropName: 'b' })] },
         { field: 'hsl', headerName: 'HSL', valueFormatter: (x: IHsl) => `(${x.h.toFixed(1)}, ${x.s.toFixed(1)}, ${x.l.toFixed(1)})`, width: 150, filterable: true, filterOperators: [create3ValOperator<IHsl>({ aPropName: 'h', bPropName: 's', cPropName: 'l' })] },
         { field: 'hsv', headerName: 'HSV', valueFormatter: (x: IHsv) => `(${x.h.toFixed(1)}, ${x.s.toFixed(1)}, ${x.v.toFixed(1)})`, width: 150, filterable: true, filterOperators: [create3ValOperator<IHsv>({ aPropName: 'h', bPropName: 's', cPropName: 'v' })] },
+        { field: 'lab', headerName: 'LAB', valueFormatter: (x: ILab) => `(${x.l.toFixed(1)}, ${x.a.toFixed(1)}, ${x.b.toFixed(1)})`, width: 150, filterable: true, filterOperators: [create3ValOperator<ILab>({ aPropName: 'l', bPropName: 'a', cPropName: 'b' })] },
+        { field: 'lch', headerName: 'LCH', valueFormatter: (x: ILch) => `(${x.l.toFixed(1)}, ${x.c.toFixed(1)}, ${x.h.toFixed(1)})`, width: 150, filterable: true, filterOperators: [create3ValOperator<ILch>({ aPropName: 'l', bPropName: 'c', cPropName: 'h' })] },
         { field: 'lrv', headerName: 'LRV', width: 100, filterable: true, filterOperators: [createRangeOperator()] },
     ];
 
