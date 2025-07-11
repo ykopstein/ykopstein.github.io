@@ -7,7 +7,7 @@ export interface ScsColorSelectorProps {
     onSelect: (colorCode: string) => void;
 }
 
-const create3ValFilter = <T extends GridValidRowModel>(props: Pick<_3ValFilterInputProps, 'aPropName' | 'bPropName' | 'cPropName'>): GridFilterOperator<T, any, any, _3ValFilterInputProps> => {
+const create3ValOperator = <T extends GridValidRowModel>(props: Pick<_3ValFilterInputProps, 'aPropName' | 'bPropName' | 'cPropName'>): GridFilterOperator<T, any, any, _3ValFilterInputProps> => {
     return {
         label: 'Range',
         value: '3Val',
@@ -60,8 +60,8 @@ function _3ValFilterInput({ aPropName, bPropName, cPropName, applyValue, item}: 
     return (
         <ul style={{ listStyleType: 'none', padding: 0 }}>
             <li><TextField label={`${aPropName} min`} value={aMinVal} onChange={e => setAMinVal(e.target.value)} /> <TextField label={`${aPropName} max`} value={aMaxVal} onChange={e => setAMaxVal(e.target.value)} /></li>
-            <li><TextField label={`${bPropName} min`}  value={bMinVal} onChange={e => setBMinVal(e.target.value)} /> <TextField label={`${bPropName} min`}  value={bMaxVal} onChange={e => setBMaxVal(e.target.value)} /></li>
-            <li><TextField label={`${cPropName} min`}  value={cMinVal} onChange={e => setCMinVal(e.target.value)} /> <TextField label={`${cPropName} min`}  value={cMaxVal} onChange={e => setCMaxVal(e.target.value)} /></li>
+            <li><TextField label={`${bPropName} min`}  value={bMinVal} onChange={e => setBMinVal(e.target.value)} /> <TextField label={`${bPropName} max`}  value={bMaxVal} onChange={e => setBMaxVal(e.target.value)} /></li>
+            <li><TextField label={`${cPropName} min`}  value={cMinVal} onChange={e => setCMinVal(e.target.value)} /> <TextField label={`${cPropName} max`}  value={cMaxVal} onChange={e => setCMaxVal(e.target.value)} /></li>
             <li>
                 <button onClick={() => {
                     const filter: _3ValFilter = {
@@ -111,9 +111,9 @@ function ScsColorSelector({ onSelect }: ScsColorSelectorProps) {
     const columns: GridColDef[] = [
         { field: 'number', headerName: 'SW Color #', width: 150 },
         { field: 'name', headerName: 'Name', width: 200 },
-        { field: 'rgb', headerName: 'RGB', valueFormatter: (x: IRgb) => `(${x.r}, ${x.g}, ${x.b})`, width: 150, filterable: true, filterOperators: [create3ValFilter<IRgb>({ aPropName: 'r', bPropName: 'g', cPropName: 'b' })] },
-        { field: 'hsl', headerName: 'HSL', valueFormatter: (x: IHsl) => `(${x.h}, ${x.s}, ${x.l})`, width: 150, filterable: true, filterOperators: [create3ValFilter<IHsl>({ aPropName: 'h', bPropName: 's', cPropName: 'l' })] },
-        { field: 'hsv', headerName: 'HSV', valueFormatter: (x: IHsv) => `(${x.h}, ${x.s}, ${x.v})`, width: 150, filterable: true, filterOperators: [create3ValFilter<IHsv>({ aPropName: 'h', bPropName: 's', cPropName: 'v' })] },
+        { field: 'rgb', headerName: 'RGB', valueFormatter: (x: IRgb) => `(${x.r}, ${x.g}, ${x.b})`, width: 150, filterable: true, filterOperators: [create3ValOperator<IRgb>({ aPropName: 'r', bPropName: 'g', cPropName: 'b' })] },
+        { field: 'hsl', headerName: 'HSL', valueFormatter: (x: IHsl) => `(${x.h}, ${x.s}, ${x.l})`, width: 150, filterable: true, filterOperators: [create3ValOperator<IHsl>({ aPropName: 'h', bPropName: 's', cPropName: 'l' })] },
+        { field: 'hsv', headerName: 'HSV', valueFormatter: (x: IHsv) => `(${x.h}, ${x.s}, ${x.v})`, width: 150, filterable: true, filterOperators: [create3ValOperator<IHsv>({ aPropName: 'h', bPropName: 's', cPropName: 'v' })] },
         { field: 'lrv', headerName: 'LRV', width: 100, filterable: true },
     ];
 
@@ -125,6 +125,7 @@ function ScsColorSelector({ onSelect }: ScsColorSelectorProps) {
             paginationModel={{ pageSize: 10, page: 0 }}
             filterMode="client"
             sortingMode="client"
+            paginationMode="client"
             onRowDoubleClick={e => onSelect(e.id.toString())} />
     );
 }

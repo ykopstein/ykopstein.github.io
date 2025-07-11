@@ -41,8 +41,8 @@ function ScsColorDetails({ colorCode, onColorLink }: ScsColorDetailsProps) {
                         <ul style={{ textAlign: "left" }}>
                             <li>Hex #{colorMetadata.hex}</li>
                             <li>RGB ({colorMetadata.rgb.r}, {colorMetadata.rgb.g}, {colorMetadata.rgb.b})</li>
-                            <li>HSL ({colorMetadata.hsl.h.toFixed(1)}, {(colorMetadata.hsl.s * 100).toFixed(1)}, {(colorMetadata.hsl.l * 100).toFixed(1)})</li>
-                            <li>HSV ({colorMetadata.hsv.h.toFixed(1)}, {(colorMetadata.hsv.s * 100).toFixed(1)}, {(colorMetadata.hsv.v * 100).toFixed(1)})</li>
+                            <li>HSL ({colorMetadata.hsl.h.toFixed(1)}, {(colorMetadata.hsl.s).toFixed(1)}, {(colorMetadata.hsl.l).toFixed(1)})</li>
+                            <li>HSV ({colorMetadata.hsv.h.toFixed(1)}, {(colorMetadata.hsv.s).toFixed(1)}, {(colorMetadata.hsv.v).toFixed(1)})</li>
                             <li>LRV {(colorMetadata.lrv).toFixed(1)}</li>
                         </ul>
 

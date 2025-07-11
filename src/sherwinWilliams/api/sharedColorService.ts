@@ -46,8 +46,8 @@ export const calculateMetadata = (scsColor: SharedColorServiceColor): IColorMeta
         name: scsColor.name,
         hex: scsColor.hex,
         rgb: { r: r, g: g, b: b },
-        hsl: { h: hue, s: parseFloat(scsColor.saturation), l: parseFloat(scsColor.lightness) },
-        hsv: { h: hue, s: hsv.s, v: hsv.v },
+        hsl: { h: hue, s: parseFloat(scsColor.saturation) * 100, l: parseFloat(scsColor.lightness) * 100 },
+        hsv: { h: hue, s: hsv.s * 100, v: hsv.v * 100 },
         lrv: parseFloat(scsColor.lrv)
     };
 };
