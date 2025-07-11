@@ -50,12 +50,13 @@ interface _3ValFilterInputProps extends GridFilterInputValueProps {
 }
 
 function _3ValFilterInput({ aPropName, bPropName, cPropName, applyValue, item }: _3ValFilterInputProps) {
-    const [aMinVal, setAMinVal] = useState<string>('');
-    const [aMaxVal, setAMaxVal] = useState<string>('');
-    const [bMinVal, setBMinVal] = useState<string>('');
-    const [bMaxVal, setBMaxVal] = useState<string>('');
-    const [cMinVal, setCMinVal] = useState<string>('');
-    const [cMaxVal, setCMaxVal] = useState<string>('');
+    const filter = item.value as _3ValFilter | undefined;
+    const [aMinVal, setAMinVal] = useState<string>(filter?.a.min?.toString() ?? '');
+    const [aMaxVal, setAMaxVal] = useState<string>(filter?.a.max?.toString() ?? '');
+    const [bMinVal, setBMinVal] = useState<string>(filter?.b.min?.toString() ?? '');
+    const [bMaxVal, setBMaxVal] = useState<string>(filter?.b.max?.toString() ?? '');
+    const [cMinVal, setCMinVal] = useState<string>(filter?.c.min?.toString() ?? '');
+    const [cMaxVal, setCMaxVal] = useState<string>(filter?.c.max?.toString() ?? '');
 
     return (
         <ul style={{ listStyleType: 'none', padding: 0 }}>
@@ -111,8 +112,9 @@ interface RangeFilterInputProps extends GridFilterInputValueProps {
 }
 
 function RangeFilterInput({ applyValue, item }: RangeFilterInputProps) {
-    const [minVal, setMinVal] = useState<string>('');
-    const [maxVal, setMaxVal] = useState<string>('');
+    const filter = item.value as RangeFilter | undefined;
+    const [minVal, setMinVal] = useState<string>(filter?.min?.toString() ?? '');
+    const [maxVal, setMaxVal] = useState<string>(filter?.max?.toString() ?? '');
 
     return (<>
         <TextField
