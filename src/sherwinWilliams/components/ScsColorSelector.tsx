@@ -189,7 +189,8 @@ function ScsColorSelector({ onSelect }: ScsColorSelectorProps) {
                     paginationModel: { pageSize: 10, page: 0 }
                 }
             }}
-            onRowDoubleClick={e => onSelect(e.id.toString())} />
+            onRowDoubleClick={e => onSelect(e.id.toString())}
+            showToolbar />
     );
 }
 
