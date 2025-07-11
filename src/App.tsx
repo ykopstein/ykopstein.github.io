@@ -1,13 +1,12 @@
-import { BrowserRouter, Routes, Route, useNavigate, useParams } from 'react-router-dom';
 import './App.css'
 import ScsColorDetails from './sherwinWilliams/components/ScsColorDetails'
 import ScsColorSelector from './sherwinWilliams/components/ScsColorSelector'
+import { Card, CardHeader, CardContent, CardActions } from '@mui/material';
 import { useState } from 'react';
 
-function SwColorInfoRoute() {
+function App() {
     const [showSelector, setShowSelector] = useState(false);
-    const { colorCode } = useParams<{ colorCode: string }>();
-    const navigate = useNavigate();
+    const [selectedColorCodes, setSelectedColorCodes] = useState<string[]>([]);
 
     return (
         <>
@@ -18,26 +17,31 @@ function SwColorInfoRoute() {
             </button>
             <div hidden={!showSelector}>
                 <ScsColorSelector
-                    onSelect={code => navigate(`/color/${code}`)}
+                    onSelect={code => setSelectedColorCodes([...selectedColorCodes, code])}
                 />
             </div>
-            <ScsColorDetails
-                colorCode={colorCode || ''}
-                onColorLink={code => navigate(`/color/${code}`)}
-            />
-        </>
-    );
-}
 
-function App() {
-    return (
-        <>
-            <BrowserRouter>
-                <Routes>
-                    <Route path="/color/:colorCode" element={<SwColorInfoRoute />} />
-                    <Route path="*" element={<SwColorInfoRoute />} />
-                </Routes>
-            </BrowserRouter>
+            {
+                selectedColorCodes.map((colorCode, index) => (
+                    <Card key={index}>
+                        <CardContent>
+                            <ScsColorDetails
+                                colorCode={colorCode}
+                                onColorLink={code => setSelectedColorCodes([...selectedColorCodes, code])}
+                            />
+                        </CardContent>
+                        <CardActions>
+                            <button onClick={() => {
+                                setSelectedColorCodes(selectedColorCodes.filter(code => code !== colorCode));
+                            }}>Remove</button>
+                        </CardActions>
+                    </Card>
+                ))
+            }
+
+            {selectedColorCodes.length === 0 && (
+                <p>No colors selected. Please select a color to view details.</p>
+            )}
         </>
     );
 }
