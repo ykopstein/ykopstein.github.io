@@ -1,7 +1,7 @@
 import './App.css'
 import ScsColorDetails from './sherwinWilliams/components/ScsColorDetails'
 import ScsColorSelector from './sherwinWilliams/components/ScsColorSelector'
-import { Card, CardHeader, CardContent, CardActions } from '@mui/material';
+import { Card, CardContent, CardActions } from '@mui/material';
 import { useState } from 'react';
 
 function App() {

@@ -1,7 +1,7 @@
 import { type SharedColorServiceColor, type IColorLinkInfo, type IColorMetadata } from '../api/types';
 import { getColor, calculateMetadata } from '../api/sharedColorService';
 import { useEffect, useRef, useState } from "react";
-import { Card, Popover } from '@mui/material';
+import { Popover } from '@mui/material';
 
 export interface ScsColorDetailsProps {
     colorCode: string;
