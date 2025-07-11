@@ -112,8 +112,8 @@ function ScsColorSelector({ onSelect }: ScsColorSelectorProps) {
         { field: 'number', headerName: 'SW Color #', width: 150 },
         { field: 'name', headerName: 'Name', width: 200 },
         { field: 'rgb', headerName: 'RGB', valueFormatter: (x: IRgb) => `(${x.r}, ${x.g}, ${x.b})`, width: 150, filterable: true, filterOperators: [create3ValOperator<IRgb>({ aPropName: 'r', bPropName: 'g', cPropName: 'b' })] },
-        { field: 'hsl', headerName: 'HSL', valueFormatter: (x: IHsl) => `(${x.h}, ${x.s}, ${x.l})`, width: 150, filterable: true, filterOperators: [create3ValOperator<IHsl>({ aPropName: 'h', bPropName: 's', cPropName: 'l' })] },
-        { field: 'hsv', headerName: 'HSV', valueFormatter: (x: IHsv) => `(${x.h}, ${x.s}, ${x.v})`, width: 150, filterable: true, filterOperators: [create3ValOperator<IHsv>({ aPropName: 'h', bPropName: 's', cPropName: 'v' })] },
+        { field: 'hsl', headerName: 'HSL', valueFormatter: (x: IHsl) => `(${x.h.toFixed(1)}, ${x.s.toFixed(1)}, ${x.l.toFixed(1)})`, width: 150, filterable: true, filterOperators: [create3ValOperator<IHsl>({ aPropName: 'h', bPropName: 's', cPropName: 'l' })] },
+        { field: 'hsv', headerName: 'HSV', valueFormatter: (x: IHsv) => `(${x.h.toFixed(1)}, ${x.s.toFixed(1)}, ${x.v.toFixed(1)})`, width: 150, filterable: true, filterOperators: [create3ValOperator<IHsv>({ aPropName: 'h', bPropName: 's', cPropName: 'v' })] },
         { field: 'lrv', headerName: 'LRV', width: 100, filterable: true },
     ];
 
