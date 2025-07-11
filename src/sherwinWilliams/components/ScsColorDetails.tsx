@@ -30,7 +30,7 @@ function ScsColorDetails({ colorCode, onColorLink }: ScsColorDetailsProps) {
             {scsColor === null || colorMetadata === null ?
                 (<p>No color selected</p>) :
                 (<>
-                    <h3 style={{ textAlign: "left" }}></h3>
+                    <h3 style={{ textAlign: "left" }}>{scsColor.name} ({scsColor.colorNumber})</h3>
                     <div style={{ display: "flex", alignItems: "flex-start" }}>
                         <div style={{
                             backgroundColor: `#${scsColor.hex}`,
