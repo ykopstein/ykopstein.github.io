@@ -21,23 +21,25 @@ function App() {
                 />
             </div>
 
-            {
-                selectedColorCodes.map((colorCode, index) => (
-                    <Card key={index}>
-                        <CardContent>
-                            <ScsColorDetails
-                                colorCode={colorCode}
-                                onColorLink={code => setSelectedColorCodes([...selectedColorCodes, code])}
-                            />
-                        </CardContent>
-                        <CardActions>
-                            <button onClick={() => {
-                                setSelectedColorCodes(selectedColorCodes.filter(code => code !== colorCode));
-                            }}>Remove</button>
-                        </CardActions>
-                    </Card>
-                ))
-            }
+            <div style={{ display: 'flex', flexWrap: 'wrap', gap: '16px' }}>
+                {
+                    selectedColorCodes.map((colorCode, index) => (
+                        <Card key={index}>
+                            <CardContent>
+                                <ScsColorDetails
+                                    colorCode={colorCode}
+                                    onColorLink={code => setSelectedColorCodes([...selectedColorCodes, code])}
+                                />
+                            </CardContent>
+                            <CardActions>
+                                <button onClick={() => {
+                                    setSelectedColorCodes(selectedColorCodes.filter(code => code !== colorCode));
+                                }}>Remove</button>
+                            </CardActions>
+                        </Card>
+                    ))
+                }
+            </div>
 
             {selectedColorCodes.length === 0 && (
                 <p>No colors selected. Please select a color to view details.</p>
