@@ -4,13 +4,31 @@ export interface IColorLinkInfo {
     hex: string;
 }
 
+export interface IRgb {
+    r: number;
+    g: number;
+    b: number;
+}
+
+export interface IHsl {
+    h: number;
+    s: number;
+    l: number;
+}
+
+export interface IHsv {
+    h: number;
+    s: number;
+    v: number; 
+}
+
 export interface IColorMetadata {
     number: string;
     name: string;
     hex: string;
-    rgb: { r: number, g: number, b: number };
-    hsl: { h: number, s: number, l: number };
-    hsv: { h: number, s: number, v: number };
+    rgb: IRgb;
+    hsl: IHsl;
+    hsv: IHsv;
     lrv: number;
 }
 

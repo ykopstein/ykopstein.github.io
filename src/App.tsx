@@ -2,19 +2,25 @@ import { BrowserRouter, Routes, Route, useNavigate, useParams } from 'react-rout
 import './App.css'
 import ScsColorDetails from './sherwinWilliams/components/ScsColorDetails'
 import ScsColorSelector from './sherwinWilliams/components/ScsColorSelector'
-import ScsColorDownloader from './sherwinWilliams/components/ScsColorDownloader';
+import { useState } from 'react';
 
 function SwColorInfoRoute() {
+    const [showSelector, setShowSelector] = useState(false);
     const { colorCode } = useParams<{ colorCode: string }>();
     const navigate = useNavigate();
 
     return (
         <>
             <h2>Sherwin Williams Color Info</h2>
-            <ScsColorSelector
-                colorCode={colorCode || ''}
-                onSelect={code => navigate(`/color/${code}`)}
-            />
+
+            <button onClick={() => setShowSelector(!showSelector)}>
+                {showSelector ? 'Close' : 'Open'} Color Search
+            </button>
+            <div hidden={!showSelector}>
+                <ScsColorSelector
+                    onSelect={code => navigate(`/color/${code}`)}
+                />
+            </div>
             <ScsColorDetails
                 colorCode={colorCode || ''}
                 onColorLink={code => navigate(`/color/${code}`)}
@@ -26,7 +32,6 @@ function SwColorInfoRoute() {
 function App() {
     return (
         <>
-            <ScsColorDownloader></ScsColorDownloader>
             <BrowserRouter>
                 <Routes>
                     <Route path="/color/:colorCode" element={<SwColorInfoRoute />} />
