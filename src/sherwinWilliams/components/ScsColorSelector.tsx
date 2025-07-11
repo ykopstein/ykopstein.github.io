@@ -182,10 +182,11 @@ function ScsColorSelector({ onSelect }: ScsColorSelectorProps) {
             rows={rows.map(row => ({ ...row, id: row.number }))}
             columns={columns}
             loading={loading}
-            paginationModel={{ pageSize: 10, page: 0 }}
-            filterMode="client"
-            sortingMode="client"
-            paginationMode="client"
+            initialState={{
+                pagination: {
+                    paginationModel: { pageSize: 10, page: 0 }
+                }
+            }}
             onRowDoubleClick={e => onSelect(e.id.toString())} />
     );
 }
