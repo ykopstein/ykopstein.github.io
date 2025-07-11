@@ -1,6 +1,7 @@
 import { type SharedColorServiceColor, type IColorLinkInfo, type IColorMetadata } from '../api/types';
 import { getColor, calculateMetadata } from '../api/sharedColorService';
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
+import { Card, Popover } from '@mui/material';
 
 export interface ScsColorDetailsProps {
     colorCode: string;
@@ -10,6 +11,8 @@ export interface ScsColorDetailsProps {
 function ScsColorDetails({ colorCode, onColorLink }: ScsColorDetailsProps) {
     const [scsColor, setScsColor] = useState<SharedColorServiceColor | null>(null);
     const [colorMetadata, setColorMetadata] = useState<IColorMetadata | null>(null);
+    const [detailListsOpen, setDetailListsOpen] = useState<boolean>(false);
+    const btnRef = useRef<HTMLButtonElement>(null);
 
     useEffect(() => {
         if(!colorCode) return;
@@ -30,7 +33,10 @@ function ScsColorDetails({ colorCode, onColorLink }: ScsColorDetailsProps) {
             {scsColor === null || colorMetadata === null ?
                 (<p>No color selected</p>) :
                 (<>
-                    <h3 style={{ textAlign: "left" }}>{scsColor.name} ({scsColor.colorNumber})</h3>
+                    <h3 style={{ textAlign: "left" }}>
+                        <button ref={btnRef} onClick={() => setDetailListsOpen(!detailListsOpen)}>&#8964;</button>
+                        {scsColor.name} ({scsColor.colorNumber})
+                    </h3>
                     <div style={{ display: "flex", alignItems: "flex-start" }}>
                         <div style={{
                             backgroundColor: `#${scsColor.hex}`,
@@ -48,23 +54,28 @@ function ScsColorDetails({ colorCode, onColorLink }: ScsColorDetailsProps) {
                             <li>LRV {(colorMetadata.lrv).toFixed(1)}</li>
                         </ul>
 
-                        <ColorLinkList
-                            title="Coordinating Colors"
-                            colors={scsColor.coordinatingColors}
-                            onClick={code => onColorLink(code)}
-                        ></ColorLinkList>
+                        <Popover
+                            open={detailListsOpen}
+                            anchorEl={btnRef.current}
+                            onClose={() => setDetailListsOpen(false)}>
+                            <ColorLinkList
+                                title="Coordinating Colors"
+                                colors={scsColor.coordinatingColors}
+                                onClick={code => onColorLink(code)}
+                            ></ColorLinkList>
 
-                        <ColorLinkList
-                            title="Color Strip Colors"
-                            colors={scsColor.colorStripColors}
-                            onClick={code => onColorLink(code)}
-                        ></ColorLinkList>
+                            <ColorLinkList
+                                title="Color Strip Colors"
+                                colors={scsColor.colorStripColors}
+                                onClick={code => onColorLink(code)}
+                            ></ColorLinkList>
 
-                        <ColorLinkList
-                            title="Similar Colors"
-                            colors={scsColor.similarColors}
-                            onClick={code => onColorLink(code)}
-                        ></ColorLinkList>
+                            <ColorLinkList
+                                title="Similar Colors"
+                                colors={scsColor.similarColors}
+                                onClick={code => onColorLink(code)}
+                            ></ColorLinkList>
+                        </Popover>
                     </div>
                 </>)
             }
