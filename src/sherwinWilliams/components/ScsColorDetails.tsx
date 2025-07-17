@@ -1,5 +1,6 @@
 import { type SharedColorServiceColor, type IColorLinkInfo, type IColorMetadata } from '../api/types';
-import { getColor, calculateMetadata } from '../api/sharedColorService';
+import { getColor } from '../api/sharedColorService';
+import { calculateMetadata } from '../api/colorMetadata';
 import { useEffect, useRef, useState } from "react";
 import { Popover } from '@mui/material';
 

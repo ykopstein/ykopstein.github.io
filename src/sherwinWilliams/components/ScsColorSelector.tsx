@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { DataGrid, type GridColDef, type GridFilterInputValueProps, type GridFilterOperator, type GridValidRowModel } from "@mui/x-data-grid";
 import TextField from '@mui/material/TextField';
 import { type IColorMetadata, type IHsl, type IRgb, type IHsv, type ILch, type ILab } from "../api/types";
+import { getColorMetadataLookup } from "../api/colorMetadata";
 
 export interface ScsColorSelectorProps {
     onSelect: (colorCode: string) => void;
@@ -156,14 +157,9 @@ function ScsColorSelector({ onSelect }: ScsColorSelectorProps) {
 
     useEffect(() => {
         (async () => {
-            const response = await fetch('/colorLookup.json');
-            if (!response.ok) {
-                console.error('Failed to fetch color lookup data');
-                return;
-            }
+            const lookup = await getColorMetadataLookup();
+            setRows(lookup);
 
-            const data: IColorMetadata[] = await response.json();
-            setRows(data);
             setLoading(false);
         })();
     }, []);

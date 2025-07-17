@@ -117,3 +117,9 @@ export interface SharedColorServiceColor {
     isExterior: boolean;
     isInterior: boolean;
 }
+
+export type MetadataAccessor = (m: IColorMetadata) => number;
+export interface AxisMetatadata {
+    accessor: MetadataAccessor;
+    metricName: string;
+}

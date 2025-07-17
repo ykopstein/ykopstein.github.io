@@ -1,12 +1,17 @@
 import './App.css'
+import type { AxisMetatadata } from './sherwinWilliams/api/types';
+import AxisMetatadataSelector from './sherwinWilliams/components/AxisMetadataSelector';
 import ScsColorDetails from './sherwinWilliams/components/ScsColorDetails'
 import ScsColorSelector from './sherwinWilliams/components/ScsColorSelector'
+import ScsScatterPlot from './sherwinWilliams/components/ScsScatterPlot';
 import { Card, CardContent, CardActions } from '@mui/material';
 import { useState } from 'react';
 
 function App() {
     const [showSelector, setShowSelector] = useState(false);
     const [selectedColorCodes, setSelectedColorCodes] = useState<string[]>([]);
+    const [xAxis, setXAxis] = useState<AxisMetatadata | undefined>();
+    const [yAxis, setYAxis] = useState<AxisMetatadata | undefined>();
 
     return (
         <>
@@ -40,6 +45,17 @@ function App() {
                     ))
                 }
             </div>
+
+            <div>
+                <div>
+                    <AxisMetatadataSelector onSelect={axis => setXAxis(axis)} />
+                    <AxisMetatadataSelector onSelect={axis => setYAxis(axis)} />
+                </div>
+            </div>
+            <ScsScatterPlot
+                colorCodes={selectedColorCodes}
+                xAxis={xAxis}
+                yAxis={yAxis} />
 
             {selectedColorCodes.length === 0 && (
                 <p>No colors selected. Please select a color to view details.</p>
