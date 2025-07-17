@@ -2,6 +2,7 @@ import './App.css'
 import type { AxisMetatadata } from './sherwinWilliams/api/types';
 import AxisMetatadataSelector from './sherwinWilliams/components/AxisMetadataSelector';
 import ScsColorDetails from './sherwinWilliams/components/ScsColorDetails'
+import ScsColorDetailsList from './sherwinWilliams/components/ScsColorDetailsList';
 import ScsColorSelector from './sherwinWilliams/components/ScsColorSelector'
 import ScsScatterPlot from './sherwinWilliams/components/ScsScatterPlot';
 import { Card, CardContent, CardActions } from '@mui/material';
@@ -26,25 +27,11 @@ function App() {
                 />
             </div>
 
-            <div style={{ display: 'flex', flexWrap: 'wrap', gap: '16px' }}>
-                {
-                    selectedColorCodes.map((colorCode, index) => (
-                        <Card key={index}>
-                            <CardContent>
-                                <ScsColorDetails
-                                    colorCode={colorCode}
-                                    onColorLink={code => setSelectedColorCodes([...selectedColorCodes, code])}
-                                />
-                            </CardContent>
-                            <CardActions>
-                                <button onClick={() => {
-                                    setSelectedColorCodes(selectedColorCodes.filter(code => code !== colorCode));
-                                }}>Remove</button>
-                            </CardActions>
-                        </Card>
-                    ))
-                }
-            </div>
+            <ScsColorDetailsList
+                colorCodes={selectedColorCodes}
+                onAdd={code => setSelectedColorCodes([...selectedColorCodes, code])}
+                onRemove={colorCode => setSelectedColorCodes(selectedColorCodes.filter(code => code !== colorCode))}
+            />
 
             <div>
                 <div>
