@@ -27,12 +27,6 @@ function App() {
                 />
             </div>
 
-            <ScsColorDetailsList
-                colorCodes={selectedColorCodes}
-                onAdd={code => setSelectedColorCodes([...selectedColorCodes, code])}
-                onRemove={colorCode => setSelectedColorCodes(selectedColorCodes.filter(code => code !== colorCode))}
-            />
-
             <div>
                 <div>
                     <AxisMetatadataSelector onSelect={axis => setXAxis(axis)} />

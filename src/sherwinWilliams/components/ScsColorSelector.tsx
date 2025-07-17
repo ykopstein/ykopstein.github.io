@@ -126,7 +126,7 @@ function RangeFilterInput({ applyValue, item }: RangeFilterInputProps) {
             label='max'
             value={maxVal}
             onChange={e => setMaxVal(e.target.value)} />
-        
+
         <button onClick={() => {
             const filter: RangeFilter = {
                 min: parseNumOrUndefined(minVal),
@@ -167,12 +167,15 @@ function ScsColorSelector({ onSelect }: ScsColorSelectorProps) {
     const columns: GridColDef[] = [
         { field: 'number', headerName: 'SW Color #', width: 150 },
         { field: 'name', headerName: 'Name', width: 200 },
-        { field: 'rgb', headerName: 'RGB', valueFormatter: (x: IRgb) => `(${x.r}, ${x.g}, ${x.b})`, width: 150, filterable: true, filterOperators: [create3ValOperator<IRgb>({ aPropName: 'r', bPropName: 'g', cPropName: 'b' })] },
-        { field: 'hsl', headerName: 'HSL', valueFormatter: (x: IHsl) => `(${x.h.toFixed(1)}, ${x.s.toFixed(1)}, ${x.l.toFixed(1)})`, width: 150, filterable: true, filterOperators: [create3ValOperator<IHsl>({ aPropName: 'h', bPropName: 's', cPropName: 'l' })] },
-        { field: 'hsv', headerName: 'HSV', valueFormatter: (x: IHsv) => `(${x.h.toFixed(1)}, ${x.s.toFixed(1)}, ${x.v.toFixed(1)})`, width: 150, filterable: true, filterOperators: [create3ValOperator<IHsv>({ aPropName: 'h', bPropName: 's', cPropName: 'v' })] },
-        { field: 'lab', headerName: 'LAB', valueFormatter: (x: ILab) => `(${x.l.toFixed(1)}, ${x.a.toFixed(1)}, ${x.b.toFixed(1)})`, width: 150, filterable: true, filterOperators: [create3ValOperator<ILab>({ aPropName: 'l', bPropName: 'a', cPropName: 'b' })] },
         { field: 'lch', headerName: 'LCH', valueFormatter: (x: ILch) => `(${x.l.toFixed(1)}, ${x.c.toFixed(1)}, ${x.h.toFixed(1)})`, width: 150, filterable: true, filterOperators: [create3ValOperator<ILch>({ aPropName: 'l', bPropName: 'c', cPropName: 'h' })] },
         { field: 'lrv', headerName: 'LRV', width: 100, filterable: true, filterOperators: [createRangeOperator()] },
+        {
+            field: 'swatch', headerName: 'Swatch', renderCell: params => (<div style={{
+                backgroundColor: `#${params.row.hex}`,
+                width: '100%',
+                height: '100%'
+            }}></div>)
+        }
     ];
 
     return (
