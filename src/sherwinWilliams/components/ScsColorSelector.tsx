@@ -1,8 +1,10 @@
 import { useEffect, useState } from "react";
-import { DataGrid, type GridColDef, type GridFilterInputValueProps, type GridFilterOperator, type GridValidRowModel } from "@mui/x-data-grid";
+import { DataGrid, type GridColDef, type GridFilterInputValueProps, type GridFilterOperator, type GridRowParams, type GridValidRowModel, type MuiEvent } from "@mui/x-data-grid";
 import TextField from '@mui/material/TextField';
-import { type IColorMetadata, type IHsl, type IRgb, type IHsv, type ILch, type ILab } from "../api/types";
+import { type IColorMetadata } from "../api/types";
 import { getColorMetadataLookup } from "../api/colorMetadata";
+import { Popover } from "@mui/material";
+import ColorTagEditor from "./ColorTagEditor";
 
 export interface ScsColorSelectorProps {
     onSelect: (colorCode: string) => void;
@@ -155,6 +157,10 @@ function ScsColorSelector({ onSelect }: ScsColorSelectorProps) {
     const [rows, setRows] = useState<IColorMetadata[]>([]);
     const [loading, setLoading] = useState<boolean>(false);
 
+    const [popoverOpen, setPopoverOpen] = useState(false);
+    const [popoverAnchor, setPopoverAnchor] = useState<HTMLElement | null>(null);
+    const [popoverColorCode, setPopoverColorCode] = useState<string | null>(null);
+
     useEffect(() => {
         (async () => {
             const lookup = await getColorMetadataLookup();
@@ -178,7 +184,14 @@ function ScsColorSelector({ onSelect }: ScsColorSelectorProps) {
         }
     ];
 
-    return (
+    const handleRowDoubleClick = (params: GridRowParams, event: MuiEvent<React.MouseEvent<HTMLElement>>) => {
+        setPopoverColorCode(params.row.number);
+        setPopoverAnchor(event.currentTarget);
+        setPopoverOpen(true);
+        onSelect(params.row.number.toString());
+    };
+
+    return (<>
         <DataGrid
             rows={rows.map(row => ({ ...row, id: row.number }))}
             columns={columns}
@@ -188,9 +201,23 @@ function ScsColorSelector({ onSelect }: ScsColorSelectorProps) {
                     paginationModel: { pageSize: 10, page: 0 }
                 }
             }}
-            onRowDoubleClick={e => onSelect(e.id.toString())}
+            onRowDoubleClick={handleRowDoubleClick}
             showToolbar />
-    );
+
+        <Popover
+            open={popoverOpen}
+            anchorEl={popoverAnchor}
+            onClose={() => setPopoverOpen(false)}
+            anchorOrigin={{
+                vertical: 'bottom',
+                horizontal: 'left',
+            }}
+        >
+            {popoverColorCode && (
+                <ColorTagEditor colorCode={popoverColorCode} />
+            )}
+        </Popover>
+    </>);
 }
 
 export default ScsColorSelector;
