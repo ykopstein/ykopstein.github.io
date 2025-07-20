@@ -1,10 +1,10 @@
 import { useEffect, useState } from "react";
 import { DataGrid, type GridColDef, type GridFilterInputValueProps, type GridFilterOperator, type GridRowParams, type GridValidRowModel, type MuiEvent } from "@mui/x-data-grid";
 import TextField from '@mui/material/TextField';
-import { type IColorMetadata } from "../api/types";
+import { type IColorMetadata, type ILch } from "../api/types";
 import { getColorMetadataLookup } from "../api/colorMetadata";
-import { Popover } from "@mui/material";
-import ColorTagEditor from "./ColorTagEditor";
+import { getTaggedColors, getTags, tagColor } from "../api/colorTagging";
+import { Button, Select, MenuItem } from "@mui/material";
 
 export interface ScsColorSelectorProps {
     onSelect: (colorCode: string) => void;
@@ -155,11 +155,19 @@ const parseNumOrUndefined = (val: string): number | undefined => {
 
 function ScsColorSelector({ onSelect }: ScsColorSelectorProps) {
     const [rows, setRows] = useState<IColorMetadata[]>([]);
+    const [undertonesWithPendingChanges, setUndertonesWithPendingChanges] = useState<{ [code: string]: string }>(getTaggedColors().reduce((obj, entry) => { obj[entry.colorCode] = entry.tag; return obj; }, {} as { [code: string]: string }));
     const [loading, setLoading] = useState<boolean>(false);
+    const undertones = getTags().map(x => x.tag);
 
-    const [popoverOpen, setPopoverOpen] = useState(false);
-    const [popoverAnchor, setPopoverAnchor] = useState<HTMLElement | null>(null);
-    const [popoverColorCode, setPopoverColorCode] = useState<string | null>(null);
+    const handleUndertoneTextChange = (colorCode: string, newText: string) => {
+        setUndertonesWithPendingChanges(prev => ({ ...prev, [colorCode]: newText }));
+    };
+
+    const applyPendingUndertoneChanges = () => {
+        for (const key in undertonesWithPendingChanges) {
+            tagColor(key, undertonesWithPendingChanges[key]);
+        }
+    };
 
     useEffect(() => {
         (async () => {
@@ -171,27 +179,40 @@ function ScsColorSelector({ onSelect }: ScsColorSelectorProps) {
     }, []);
 
     const columns: GridColDef[] = [
-        { field: 'number', headerName: 'SW Color #', width: 150 },
-        { field: 'name', headerName: 'Name', width: 200 },
-        { field: 'lch', headerName: 'LCH', valueFormatter: (x: ILch) => `(${x.l.toFixed(1)}, ${x.c.toFixed(1)}, ${x.h.toFixed(1)})`, width: 150, filterable: true, filterOperators: [create3ValOperator<ILch>({ aPropName: 'l', bPropName: 'c', cPropName: 'h' })] },
-        { field: 'lrv', headerName: 'LRV', width: 100, filterable: true, filterOperators: [createRangeOperator()] },
         {
             field: 'swatch', headerName: 'Swatch', renderCell: params => (<div style={{
                 backgroundColor: `#${params.row.hex}`,
                 width: '100%',
                 height: '100%'
             }}></div>)
+        },
+        { field: 'number', headerName: 'SW Color #', width: 150 },
+        { field: 'name', headerName: 'Name', width: 200 },
+        { field: 'lch', headerName: 'LCH', valueFormatter: (x: ILch) => `(${x.l.toFixed(1)}, ${x.c.toFixed(1)}, ${x.h.toFixed(1)})`, width: 150, filterable: true, filterOperators: [create3ValOperator<ILch>({ aPropName: 'l', bPropName: 'c', cPropName: 'h' })] },
+        { field: 'lrv', headerName: 'LRV', width: 100, filterable: true, filterOperators: [createRangeOperator()] },
+        {
+            field: 'undertone',
+            headerName: 'Undertone',
+            width: 250,
+            renderCell: params => (
+                <Select
+                    value={undertonesWithPendingChanges[params.row.number] ?? ''}
+                    onChange={e => handleUndertoneTextChange(params.row.number.toString(), e.target.value)}
+                >
+                    {undertones.map(u => (
+                        <MenuItem value={u}>{u}</MenuItem>
+                    ))}
+                </Select>
+            )
         }
     ];
 
-    const handleRowDoubleClick = (params: GridRowParams, event: MuiEvent<React.MouseEvent<HTMLElement>>) => {
-        setPopoverColorCode(params.row.number);
-        setPopoverAnchor(event.currentTarget);
-        setPopoverOpen(true);
+    const handleRowDoubleClick = (params: GridRowParams, _: MuiEvent<React.MouseEvent<HTMLElement>>) => {
         onSelect(params.row.number.toString());
     };
 
     return (<>
+        <Button onClick={() => applyPendingUndertoneChanges()}>Save Tags</Button>
         <DataGrid
             rows={rows.map(row => ({ ...row, id: row.number }))}
             columns={columns}
@@ -203,20 +224,6 @@ function ScsColorSelector({ onSelect }: ScsColorSelectorProps) {
             }}
             onRowDoubleClick={handleRowDoubleClick}
             showToolbar />
-
-        <Popover
-            open={popoverOpen}
-            anchorEl={popoverAnchor}
-            onClose={() => setPopoverOpen(false)}
-            anchorOrigin={{
-                vertical: 'bottom',
-                horizontal: 'left',
-            }}
-        >
-            {popoverColorCode && (
-                <ColorTagEditor colorCode={popoverColorCode} />
-            )}
-        </Popover>
     </>);
 }
 

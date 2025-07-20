@@ -1,34 +1,27 @@
-
 export interface IColorTag {
     tag: string;
-    value: string;
-}
-
-export interface IColorTagMetadata {
-    tag: string;
-    value: string;
     displayColorHex: string;
 }
 
-let _lsTags: IColorTagMetadata[] | null = null;
-const _lsGetTags = (): IColorTagMetadata[] => {
+let _lsTags: IColorTag[] | null = null;
+const _lsGetTags = (): IColorTag[] => {
     if (!_lsTags) {
         const stored = localStorage.getItem('ct:tags');
         if (!stored) _lsTags = [];
-        else _lsTags = JSON.parse(stored) as IColorTagMetadata[];
+        else _lsTags = JSON.parse(stored) as IColorTag[];
     }
 
     return _lsTags;
 }
 
-const _lsSetTags = (tags: IColorTagMetadata[]) => {
+const _lsSetTags = (tags: IColorTag[]) => {
     _lsTags = tags;
     localStorage.setItem('ct:tags', JSON.stringify(tags));
 };
 
 interface TagColorJoin {
+    tag: string;
     colorCode: string;
-    tags: IColorTag[];
 }
 
 let _lsTagColorJoins: TagColorJoin[] | null = null;
@@ -47,43 +40,31 @@ const _lsSetTagColorJoins = (entries: TagColorJoin[]) => {
     localStorage.setItem('ct:joins', JSON.stringify(entries));
 };
 
-export const getTags = (): IColorTagMetadata[] => {
+export const getTags = (): IColorTag[] => {
     return _lsGetTags();
 };
 
-export const defineTag = (tag: IColorTagMetadata) => {
+export const defineTag = (tag: IColorTag) => {
     _lsSetTags([..._lsGetTags(), tag]);
 };
 
-export const getTagsOnColor = (colorCode: string): IColorTag[] => {
-    return _lsGetTagColorJoins()
-        .filter(x => x.colorCode == colorCode)
-        .flatMap(x => x.tags);
+export const overrideAllTags = (tags: IColorTag[]) => {
+    _lsSetTags(tags);
 };
 
-export const tagColor = (colorCode: string, tag: string, value: string) => {
+export const tagColor = (colorCode: string, tag: string) => {
     const currentJoins = _lsGetTagColorJoins();
     let currentJoinedColor = currentJoins.find(x => x.colorCode === colorCode);
     if (!currentJoinedColor) {
-        currentJoinedColor = { colorCode: colorCode, tags: [] };
+        currentJoinedColor = { colorCode: colorCode, tag: tag };
         currentJoins.push(currentJoinedColor);
-    }
-
-    let currentTag = currentJoinedColor.tags.find(x => x.tag === tag);
-    if(!currentTag) {
-        currentJoinedColor.tags.push({ tag: tag, value: value });
     } else {
-        currentTag.value = value;
+        currentJoinedColor.tag = tag;
     }
 
     _lsSetTagColorJoins(currentJoins);
 };
 
-export const getTaggedColors = (tag: string): { colorCode: string, tagValue: string }[] => {
-    return _lsGetTagColorJoins()
-        .filter(x => x.tags.some(y => y.tag === tag))
-        .map(x => ({
-            colorCode: x.colorCode,
-            tagValue: x.tags.find(y => y.tag === tag)!.value
-        }));
+export const getTaggedColors = () => {
+    return _lsGetTagColorJoins();
 };

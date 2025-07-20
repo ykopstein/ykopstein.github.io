@@ -1,18 +1,31 @@
+import { Button, TextField } from '@mui/material';
 import './App.css'
 import type { AxisMetatadata } from './sherwinWilliams/api/types';
 import AxisMetatadataSelector from './sherwinWilliams/components/AxisMetadataSelector';
-import ScsColorDetails from './sherwinWilliams/components/ScsColorDetails'
-import ScsColorDetailsList from './sherwinWilliams/components/ScsColorDetailsList';
 import ScsColorSelector from './sherwinWilliams/components/ScsColorSelector'
 import ScsScatterPlot from './sherwinWilliams/components/ScsScatterPlot';
-import { Card, CardContent, CardActions } from '@mui/material';
 import { useState } from 'react';
+import ColorTagManager from './sherwinWilliams/components/ColorTagManager';
+import { getTaggedColors, getTags } from './sherwinWilliams/api/colorTagging';
 
 function App() {
     const [showSelector, setShowSelector] = useState(false);
-    const [selectedColorCodes, setSelectedColorCodes] = useState<string[]>([]);
+    const [showScatterPlot, setShowScatterPlot] = useState(false);
+    const [showTagManager, setShowTagManager] = useState(false);
+    const [tag, setTag] = useState('');
+    const [taggedColors, setTaggedColors] = useState<{ code: string, displayHex: string }[]>([]);
     const [xAxis, setXAxis] = useState<AxisMetatadata | undefined>();
     const [yAxis, setYAxis] = useState<AxisMetatadata | undefined>();
+
+    const refreshTaggedColors = async () => {
+        const taggedColors = getTaggedColors();
+        const tags = getTags();
+
+        setTaggedColors(taggedColors.map(x => ({
+            code: x.colorCode,
+            displayHex: tags.find(t => t.tag === x.tag)?.displayColorHex ?? ''
+        })));
+    };
 
     return (
         <>
@@ -21,26 +34,36 @@ function App() {
             <button onClick={() => setShowSelector(!showSelector)}>
                 {showSelector ? 'Close' : 'Open'} Color Search
             </button>
+            <button onClick={() => setShowScatterPlot(!showScatterPlot)}>
+                {showScatterPlot ? 'Close' : 'Open'} Scatterplot
+            </button>
+            <button onClick={() => setShowTagManager(!showTagManager)}>
+                {showTagManager ? 'Close' : 'Open'} Tag Manager
+            </button>
+
             <div hidden={!showSelector}>
                 <ScsColorSelector
-                    onSelect={code => setSelectedColorCodes([...selectedColorCodes, code])}
+                    onSelect={() => { }}
                 />
             </div>
 
-            <div>
+            <div hidden={!showScatterPlot}>
                 <div>
                     <AxisMetatadataSelector onSelect={axis => setXAxis(axis)} />
                     <AxisMetatadataSelector onSelect={axis => setYAxis(axis)} />
+                    <TextField value={tag} onChange={e => setTag(e.target.value) } />
+                    <Button onClick={async () => await refreshTaggedColors()}>Refresh</Button>
                 </div>
-            </div>
-            <ScsScatterPlot
-                colorCodes={selectedColorCodes}
-                xAxis={xAxis}
-                yAxis={yAxis} />
 
-            {selectedColorCodes.length === 0 && (
-                <p>No colors selected. Please select a color to view details.</p>
-            )}
+                <ScsScatterPlot
+                    colors={taggedColors}
+                    xAxis={xAxis}
+                    yAxis={yAxis} />
+            </div>
+
+            <div hidden={!showTagManager}>
+                <ColorTagManager></ColorTagManager>
+            </div>
         </>
     );
 }

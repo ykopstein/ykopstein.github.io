@@ -5,12 +5,12 @@ import { type AxisMetatadata } from '../api/types';
 import { getColorMetadata } from '../api/colorMetadata';
 
 interface ScsScatterPlotProps {
-    colorCodes: string[];
+    colors: { code: string, displayHex: string }[];
     xAxis: AxisMetatadata | undefined;
     yAxis: AxisMetatadata | undefined;
 }
 
-function ScsScatterPlot({ colorCodes, xAxis, yAxis }: ScsScatterPlotProps) {
+function ScsScatterPlot({ colors, xAxis, yAxis }: ScsScatterPlotProps) {
     const [options, setOptions] = useState<Highcharts.Options | undefined>();
 
     useEffect(() => {
@@ -21,16 +21,16 @@ function ScsScatterPlot({ colorCodes, xAxis, yAxis }: ScsScatterPlotProps) {
 
         (async () => {
             const points: Highcharts.PointOptionsObject[] = [];
-            for (const code of colorCodes) {
-                const metadata = await getColorMetadata(code);
-                if (!metadata) throw new Error(`No metadata found for color code: ${code}`);
+            for (const color of colors) {
+                const metadata = await getColorMetadata(color.code);
+                if (!metadata) throw new Error(`No metadata found for color code: ${color}`);
 
                 points.push({
                     name: metadata.name,
                     color: `#${metadata.hex}`,
                     x: xAxis.accessor(metadata),
                     y: yAxis.accessor(metadata),
-                    marker: { fillColor: metadata.hex, symbol: 'circle', radius: 6 }
+                    marker: { fillColor: color.displayHex, symbol: 'circle', radius: 6 }
                 });
             }
 
@@ -48,7 +48,7 @@ function ScsScatterPlot({ colorCodes, xAxis, yAxis }: ScsScatterPlotProps) {
                 }]
             });
         })();
-    }, [colorCodes, xAxis, yAxis]);
+    }, [colors, xAxis, yAxis]);
 
     return (<>
         {!!options ?
