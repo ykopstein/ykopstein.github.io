@@ -30,7 +30,7 @@ function ColorTagManager() {
                     <TextField
                         value={x.displayColorHex}
                         placeholder="Hex color"
-                        onChange={e => setTags(prev => { prev[ix].displayColorHex = e.target.value; return prev; })} />
+                        onChange={e => setTags(prev => { const updated = [...prev]; updated[ix].displayColorHex = e.target.value; return updated; })} />
                 </li>
             ))}
             <li>

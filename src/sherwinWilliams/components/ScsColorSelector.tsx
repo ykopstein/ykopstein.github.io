@@ -212,7 +212,7 @@ function ScsColorSelector({ onSelect }: ScsColorSelectorProps) {
     };
 
     return (<>
-        <Button onClick={() => applyPendingUndertoneChanges()}>Save Tags</Button>
+        <Button onClick={() => applyPendingUndertoneChanges()}>Save Undertone Changes</Button>
         <DataGrid
             rows={rows.map(row => ({ ...row, id: row.number }))}
             columns={columns}
