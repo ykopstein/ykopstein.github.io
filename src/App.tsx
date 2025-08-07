@@ -10,7 +10,7 @@ import { getTaggedColors, getTags } from './sherwinWilliams/api/colorTagging';
 
 function App() {
     const [tabIndex, setTabIndex] = useState(0);
-    const [taggedColors, setTaggedColors] = useState<{ code: string, displayHex: string }[]>([]);
+    const [taggedColors, setTaggedColors] = useState<{ code: string, displayHex: string, tagname: string }[]>([]);
     const [xAxis, setXAxis] = useState<AxisMetatadata | undefined>();
     const [yAxis, setYAxis] = useState<AxisMetatadata | undefined>();
 
@@ -20,7 +20,8 @@ function App() {
 
         setTaggedColors(taggedColors.map(x => ({
             code: x.colorCode,
-            displayHex: tags.find(t => t.tag === x.tag)?.displayColorHex ?? ''
+            displayHex: tags.find(t => t.tag === x.tag)?.displayColorHex ?? '',
+            tagname: x.tag
         })));
     };
 
