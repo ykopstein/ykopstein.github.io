@@ -41,11 +41,12 @@ function App() {
             </Box>
 
             <Box hidden={tabIndex !== 1}>
-                <div style={{ width: '80vw', margin: 0, padding: 0 }}>
+                <div style={{ width: '100vw', height: '100vh', position: 'absolute', top: 0, left: 0, margin: 0, padding: 0, backgroundColor: 'white' }}>
                     <div>
                         <AxisMetatadataSelector onSelect={axis => setXAxis(axis)} />
                         <AxisMetatadataSelector onSelect={axis => setYAxis(axis)} />
                         <Button onClick={async () => await refreshTaggedColors()}>Refresh</Button>
+                        <Button onClick={() => setTabIndex(0)}>Close</Button>
                     </div>
 
                     <ScsScatterPlot

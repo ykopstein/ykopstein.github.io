@@ -50,11 +50,13 @@ function ScsScatterPlot({ colors, xAxis, yAxis }: ScsScatterPlotProps) {
         })();
     }, [colors, xAxis, yAxis]);
 
-    return (<>
-        {!!options ?
-            <HighchartsReact highcharts={Highcharts} options={options} /> :
-            <p>Loading data...</p>}
-    </>);
+    return (
+        <div style={{ width: '100%', height: '100%' }}>
+            {!!options ?
+                <HighchartsReact containerProps={{ style: { height: '100%' }}} highcharts={Highcharts} options={options} /> :
+                <p>Loading data...</p>}
+        </div>
+    );
 }
 
 export default ScsScatterPlot;
