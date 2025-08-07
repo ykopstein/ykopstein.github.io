@@ -41,16 +41,18 @@ function App() {
             </Box>
 
             <Box hidden={tabIndex !== 1}>
-                <div>
-                    <AxisMetatadataSelector onSelect={axis => setXAxis(axis)} />
-                    <AxisMetatadataSelector onSelect={axis => setYAxis(axis)} />
-                    <Button onClick={async () => await refreshTaggedColors()}>Refresh</Button>
-                </div>
+                <div style={{ width: '80vw', margin: 0, padding: 0 }}>
+                    <div>
+                        <AxisMetatadataSelector onSelect={axis => setXAxis(axis)} />
+                        <AxisMetatadataSelector onSelect={axis => setYAxis(axis)} />
+                        <Button onClick={async () => await refreshTaggedColors()}>Refresh</Button>
+                    </div>
 
-                <ScsScatterPlot
-                    colors={taggedColors}
-                    xAxis={xAxis}
-                    yAxis={yAxis} />
+                    <ScsScatterPlot
+                        colors={taggedColors}
+                        xAxis={xAxis}
+                        yAxis={yAxis} />
+                </div>
             </Box>
 
             <Box hidden={tabIndex !== 2}>

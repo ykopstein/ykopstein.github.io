@@ -30,15 +30,15 @@ function ScsScatterPlot({ colors, xAxis, yAxis }: ScsScatterPlotProps) {
                     color: `#${metadata.hex}`,
                     x: xAxis.accessor(metadata),
                     y: yAxis.accessor(metadata),
-                    marker: { fillColor: color.displayHex, symbol: 'circle', radius: 6 }
+                    marker: { fillColor: color.displayHex, symbol: 'circle', radius: 4 }
                 });
             }
 
             setOptions({
                 chart: { type: 'scatter', zooming: { type: 'xy' } },
                 title: { text: 'Color Scatter Plot' },
-                xAxis: { title: { text: xAxis.metricName } },
-                yAxis: { title: { text: yAxis.metricName } },
+                xAxis: { title: { text: xAxis.metricName }, gridLineWidth: 2 },
+                yAxis: { title: { text: yAxis.metricName }, gridLineWidth: 2 },
                 series: [{
                     type: 'scatter',
                     data: points,
